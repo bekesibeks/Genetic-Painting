@@ -20,8 +20,11 @@ public class FitnessCalculator {
 	}
 
 	public static WritableImage getSourceImage(int dimensionX, int dimensionY) {
-		final Image image = new Image("file:test.png");
+		final Image image = new Image("file:test_2.jpg");
 		WritableImage writableImage = new WritableImage(image.getPixelReader(), dimensionX, dimensionY);
+		if (source == null) {
+			source = writableImage;
+		}
 		return writableImage;
 	}
 

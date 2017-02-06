@@ -1,9 +1,9 @@
 package genetic.api.model;
 
 import static genetic.config.CommonConfig.AMOUNT_OF_MUTATION;
-import static genetic.config.CommonConfig.CHANCE_TO_ADD_NEW_BRUSH;
+import static genetic.config.CommonConfig.CHANCE_TO_ADD_NEW_CIRCLE;
 import static genetic.config.IndividualsConfig.MAX_NUMBER_OF_CURVES;
-import static genetic.factories.CurveFactory.getRandomCurve;
+import static genetic.factories.CircleFactory.getRandomCircle;
 import static genetic.utility.FitnessCalculator.calculateRgbDifference;
 import static genetic.utility.RandomUtility.randomGenerator;
 import static java.lang.Math.min;
@@ -13,25 +13,26 @@ import java.util.List;
 
 import genetic.api.evolution.Chromosome;
 import genetic.api.evolution.Individual;
-import genetic.factories.CurveFactory;
+import genetic.config.CommonConfig;
+import genetic.factories.CircleFactory;
 import view.model.BrushPaintingView;
 
 public class BrushPaintingIndividual implements Individual {
 
-	private List<Chromosome> curves;
+	private List<Chromosome> circles;
 	private long fitness;
 
 	public BrushPaintingIndividual() {
-		curves = new ArrayList<>();
+		circles = new ArrayList<>();
 
-		addFirstCurve();
+		addFirstCircles();
 	}
 
 	public BrushPaintingIndividual(BrushPaintingIndividual source) {
 		fitness = source.fitness;
-		curves = new ArrayList<>();
+		circles = new ArrayList<>();
 
-		source.getChromosomes().forEach(curve -> curves.add(new BrushPaintingCurve((BrushPaintingCurve) curve)));
+		source.getChromosomes().forEach(curve -> circles.add(new PaintingCircle((PaintingCircle) curve)));
 	}
 
 	@Override
@@ -39,9 +40,11 @@ public class BrushPaintingIndividual implements Individual {
 		List<Chromosome> otherChromosomes = otherIndividual.getChromosomes();
 		List<Chromosome> mixedChromosomes = new ArrayList<>();
 
-		for (int i = 0; i < min(otherChromosomes.size(), curves.size()); i++) {
-			if (randomGenerator.nextBoolean()) {
-				mixedChromosomes.add(curves.get(i));
+		int newSize = min(otherChromosomes.size(), circles.size());
+
+		for (int i = 0; i < newSize; i++) {
+			if (i < newSize / 2) {
+				mixedChromosomes.add(circles.get(i));
 			} else {
 				mixedChromosomes.add(otherChromosomes.get(i));
 			}
@@ -55,13 +58,12 @@ public class BrushPaintingIndividual implements Individual {
 
 	@Override
 	public void mutate() {
-		curves.stream().filter((curve) -> randomGenerator.nextDouble() < AMOUNT_OF_MUTATION)
-				.forEach(Chromosome::mutate);
 
-		if (randomGenerator.nextDouble() < CHANCE_TO_ADD_NEW_BRUSH) {
-			if (curves.size() < MAX_NUMBER_OF_CURVES) {
-				curves.add(CurveFactory.getRandomCurve());
-			}
+		if (randomGenerator.nextDouble() < CommonConfig.CHANCE_TO_ADD_NEW_CIRCLE) {
+			circles.add(getRandomCircle());
+		} else {
+			circles.stream().filter((circle) -> randomGenerator.nextDouble() < AMOUNT_OF_MUTATION)
+					.forEach(Chromosome::mutate);
 		}
 	}
 
@@ -84,15 +86,17 @@ public class BrushPaintingIndividual implements Individual {
 
 	@Override
 	public List<Chromosome> getChromosomes() {
-		return curves;
+		return circles;
 	}
 
-	public void setChromosomes(List<Chromosome> curves) {
-		this.curves = curves;
+	public void setChromosomes(List<Chromosome> circles) {
+		this.circles = circles;
 	}
 
-	private void addFirstCurve() {
-		curves.add(getRandomCurve());
+	private void addFirstCircles() {
+		for (int i = 0; i < 1; i++) {
+			circles.add(getRandomCircle());
+		}
 	}
 
 }

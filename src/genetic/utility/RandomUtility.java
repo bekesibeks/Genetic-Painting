@@ -6,16 +6,15 @@ public class RandomUtility {
 
 	public static final Random randomGenerator = new Random();
 
-	public static int getRandomNumberInRange(int currentCoordinate, int min, int max, int range) {
-		int newCoordinate = currentCoordinate + randomGenerator.nextInt(range) - (range / 2);
-		if (newCoordinate < min) {
+	public static int getRandomNumberInRange(int oldNumber, int min, int max, int range) {
+		int newNumber = oldNumber + randomGenerator.nextInt(range) - (range / 2);
+		if (newNumber < min) {
 			return min;
 		}
-		if (newCoordinate > max) {
+		if (newNumber > max) {
 			return max;
 		}
 
-		return newCoordinate;
+		return newNumber;
 	}
-
 }

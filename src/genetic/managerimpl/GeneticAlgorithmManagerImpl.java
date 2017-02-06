@@ -1,38 +1,34 @@
 package genetic.managerimpl;
 
-import java.util.List;
-
 import genetic.api.evolution.Generation;
 import genetic.api.evolution.GeneticAlgorithmManager;
 import genetic.api.evolution.Individual;
 
-public class GeneticAlgorithmManagerImpl implements GeneticAlgorithmManager{
+public class GeneticAlgorithmManagerImpl implements GeneticAlgorithmManager {
+	
+	private static long generationNumber = 0;
 	
 	private Generation generation;
-		
+
 	public GeneticAlgorithmManagerImpl(Generation generation) {
 		this.generation = generation;
 	}
-	
-	
+
 	@Override
 	public void makeEvolutionStep() {
-		long startTime = System.currentTimeMillis();    
-		List<Individual> selectedIndividuals = generation.selection();
-		System.out.println("Selected : "+selectedIndividuals.size());
-		List<Individual> newbornIndividuals = generation.crossover(selectedIndividuals);
-		System.out.println("newboen : "+newbornIndividuals.size());
-		List<Individual> mutatedNewBorns = generation.mutate(newbornIndividuals);
-		System.out.println("mutatedNewBorns : "+mutatedNewBorns.size());
-		generation.repopulate(mutatedNewBorns);
+		generationNumber++;
+		long startTime = System.currentTimeMillis();
+		generation.mutate();
+		generation.repopulate();
+		Individual fittestIndividual = generation.getFittestIndividual();
+
 		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println(estimatedTime);
+		System.out.println(generationNumber+"# Repopulated..time spent : " + estimatedTime+" fitness : "+fittestIndividual.getFitness()/100000);
 	}
 
 	@Override
 	public Individual getFittestIndividual() {
 		return generation.getFittestIndividual();
 	}
-	
-	
+
 }
