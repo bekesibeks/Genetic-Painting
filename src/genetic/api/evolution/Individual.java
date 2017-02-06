@@ -1,5 +1,7 @@
 package genetic.api.evolution;
 
+import java.util.List;
+
 public interface Individual extends Comparable<Individual> {
 	
 	Individual crossover(Individual otherIndividual);
@@ -9,4 +11,6 @@ public interface Individual extends Comparable<Individual> {
 	void calculateFitness();
 
 	long getFitness();
+	
+	List<Chromosome> getChromosomes();
 }
